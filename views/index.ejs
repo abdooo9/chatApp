@@ -1,0 +1,153 @@
+<!-- 
+ * This code was written by Abdooo9 - Abdulrahman Mohammed
+ * Discord Account: Abdooo9#0968
+ * GitHub: https://github.com/abdooo9
+ * Email: abdooo9.dev@gmail.com
+ * Profile on Developers List: https://dlist.me/a
+ * PayPal: https://paypal.me/abd0009
+ * © All rights reserved for Abdooo9 <abdooo9.dev@gmail.com>
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+    <%- include("./header.ejs") %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <br>
+
+    <div class="container">
+        <div class="card h-100 mx-auto" style="max-height: 1600px; max-width: 1000px;">
+
+            <div class="card bg-light">
+
+                <div class="card-body overflow-auto" style="height: 760px;" id="messages">
+                    <% messages.forEach(message => { %>
+                        <div class="<%= message.id === user.id ? 'alert alert-primary': 'alert alert-secondary' %>" role="alert">
+                            <h4 class="alert-heading"><%= message.username %></h4>
+                            <p><%= message.value %></p>
+                            <hr>
+                            <% if (message.isFile !== "false") { %>
+                                <a href="/download/<%= message.fileName %>" class="btn btn-primary w-100">Download <%= message.fileName %> File</a>
+                                <hr>
+                            <% } %>
+                            <p class="mb-0"><%= message.time %></p>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="card-footer" style="height: 57px;">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Your Message" id="message">
+                        <input type="file" id="file" hidden onchange="uploadFile()">
+                        <button class="btn btn-primary" onclick="document.getElementById('file').click()">Upload</span>
+                        <button class="btn btn-success" onclick="send(document.getElementById('message').value)">Send</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function send(message) {
+            const username = "<%= user.username %>";
+            const file = document.getElementById('file').files[0]
+            lastMessageTime = Date.now()
+            var currentdate = new Date(); 
+            var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+
+
+            const postDate = new FormData();
+            postDate.append("file", file || null);
+            postDate.append("value", message);
+            postDate.append("id", "<%= user.id %>");
+            postDate.append("username", username);
+            postDate.append("isFile", file ? true : false);
+            postDate.append("fileName", file ? file.name : null)
+            postDate.append("time", datetime);
+
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", "/send");
+            ajax.send(postDate)
+
+            document.getElementById('message').value = '';
+            document.getElementById('file').value = '';
+
+            const messages = document.getElementById('messages');
+            let FileHtml = "";
+            if (file) {
+                FileHtml = `<hr><a href="/download/${file.name}" class="btn btn-primary w-100">Download ${file.name} File</a>`
+            }
+
+            messages.innerHTML += `
+            <div class="alert alert-primary" role="alert">
+                <h4 class="alert-heading">${username}</h4>
+                <p>${message}</p>
+                ${FileHtml}
+                <hr>
+                <p class="mb-0">${datetime}</p>
+            </div>
+            `
+        }
+
+        async function uploadFile() {
+            document.getElementById('message').value = document.getElementById('file').files[0].name + " File";
+        }
+
+        const pageUrl = window.location.href
+        const url = new URL(pageUrl).hostname
+        var ws = new WebSocket(`ws://${url}:40510`);
+
+        ws.onopen = function () {
+            console.log('websocket is connected ...')
+        }
+
+        ws.onmessage = function (ev) {
+            const messageObj = JSON.parse(ev.data);
+            if (messageObj.id === '<%= user.id %>') return
+            const messages = document.getElementById('messages');
+            let FileHtml = "";
+
+            if (messageObj.isFile !== "false") {
+                FileHtml = `<hr><a href="/download/${messageObj.fileName}" class="btn btn-primary w-100">Download ${messageObj.fileName} File</a>`
+            }
+
+            messages.innerHTML += `
+            <div class="alert alert-secondary" role="alert">
+                <h4 class="alert-heading">${messageObj.username}</h4>
+                <p>${messageObj.value}</p>
+                ${FileHtml}
+                <hr>
+                <p class="mb-0">${messageObj.time}</p>
+            </div>
+            `
+        }
+    </script>
+</body>
+
+</html>
+
+<!-- 
+ * This code was written by Abdooo9 - Abdulrahman Mohammed
+ * Discord Account: Abdooo9#0968
+ * GitHub: https://github.com/abdooo9
+ * Email: abdooo9.dev@gmail.com
+ * Profile on Developers List: https://dlist.me/a
+ * PayPal: https://paypal.me/abd0009
+ * © All rights reserved for Abdooo9 <abdooo9.dev@gmail.com>
+-->
