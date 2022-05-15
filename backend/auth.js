@@ -1,4 +1,5 @@
 /*
+ * Github Repository: https://github.com/abdooo9/chatApp
  * This code was written by Abdooo9 - Abdulrahman Mohammed
  * Discord Account: Abdooo9#0968
  * GitHub: https://github.com/abdooo9
@@ -10,14 +11,6 @@
 
 const usersCache = require("../routers/index").usersCache
 
-function login(token, user) {
-    usersCache.set(token, user)
-}
-
-function logout(token) {
-    usersCache.del(token)
-}
-
 function user(token) {
     if (!token) return null
     if (usersCache.get(token)) {
@@ -28,10 +21,11 @@ function user(token) {
 }
 
 module.exports = {
-    login, user
+    user
 }
 
 /*
+ * Github Repository: https://github.com/abdooo9/chatApp
  * This code was written by Abdooo9 - Abdulrahman Mohammed
  * Discord Account: Abdooo9#0968
  * GitHub: https://github.com/abdooo9
