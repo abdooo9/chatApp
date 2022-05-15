@@ -1,7 +1,7 @@
 <div align="center">
     <br />
     <p>
-        <a href="https://github.com/abdooo9/chatApp"><img src="https://i.pinimg.com/originals/87/ae/aa/87aeaab2713e5b36fc344b3b7c2b52b5.png" width="200" alt="chatApp logo" /></a>
+        <a href="https://github.com/abdooo9/chatApp"><img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" width="200" alt="chatApp logo" /></a>
     </p>
     <br/>
 </div>
